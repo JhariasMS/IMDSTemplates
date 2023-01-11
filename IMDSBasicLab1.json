@@ -7,7 +7,7 @@
         "alias": "jharias",
         "GitHub": "https://github.com/JhariasMS/IMDSTemplates",
         "Enablement": "https://learn.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service?tabs=windows#frequently-asked-questions",
-        "deploymentLink": "https://labbox.azurewebsites.net/api/Labbox?url=https://github.com/JhariasMS/IMDSTemplates/blob/main/IMDSBasicLab1.json"
+        "deploymentLink": "https://labbox.azurewebsites.net/api/Labbox?url=https://raw.githubusercontent.com/JhariasMS/IMDSTemplates/main/IMDSBasicLab1.json"
     },
     "parameters": {
         "adminUsername": {
