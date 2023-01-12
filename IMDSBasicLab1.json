@@ -47,15 +47,15 @@
         }
     },
     "variables": {
-        "nicName": "myVMNic",
+        "nicName": "IMDSBasic1Nic",
         "addressPrefix": "10.0.0.0/16",
         "subnetName": "Subnet",
         "subnetPrefix": "10.0.0.0/24",
         "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
-        "vmName": "misconfigFwVM",
-        "virtualNetworkName": "MyVNET",
-        "publicIPAddressName": "myPublicIP",
-        "networkSecurityGroupName": "default-NSG"
+        "vmName": "IMDSBasic1VM",
+        "virtualNetworkName": "IMDSBasic1VNET",
+        "publicIPAddressName": "IMDSBasic1NicIP",
+        "networkSecurityGroupName": "IMDSBasic1-NSG"
     },
     "resources": [
         {
