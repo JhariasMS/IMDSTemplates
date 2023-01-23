@@ -49,16 +49,6 @@
         "virtualNetworkName": "IMDSBasic2VNET",
         "publicIPAddressName": "IMDSBasic2NicIP",
         "networkSecurityGroupName": "IMDSBasic2-NSG"
-    },variables": {
-        "nicName": "IMDSBasic2Nic",
-        "addressPrefix": "10.0.0.0/16",
-        "subnetName": "Subnet",
-        "subnetPrefix": "10.0.0.0/24",
-        "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
-        "vmName": "IMDSBasic2",
-        "virtualNetworkName": "IMDSBasic2VNET",
-        "publicIPAddressName": "IMDSBasic2NicIP",
-        "networkSecurityGroupName": "IMDSBasic2-NSG"
     },
     "resources": [
         {
