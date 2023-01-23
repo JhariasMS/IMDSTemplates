@@ -2,7 +2,7 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "metadata": {
-        "description": "Simple VM created to test out how to get Public IP address from IMDS call",
+        "description": "VM has a Script which is not working due to an issue when calling IMDS",
         "author": "Jhosua Arias Quintero",
         "alias": "jharias",
         "GitHub": "https://github.com/JhariasMS/IMDSTemplates",
@@ -40,6 +40,16 @@
         }
     },
     "variables": {
+        "nicName": "IMDSBasic2Nic",
+        "addressPrefix": "10.0.0.0/16",
+        "subnetName": "Subnet",
+        "subnetPrefix": "10.0.0.0/24",
+        "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
+        "vmName": "IMDSBasic2",
+        "virtualNetworkName": "IMDSBasic2VNET",
+        "publicIPAddressName": "IMDSBasic2NicIP",
+        "networkSecurityGroupName": "IMDSBasic2-NSG"
+    },variables": {
         "nicName": "IMDSBasic2Nic",
         "addressPrefix": "10.0.0.0/16",
         "subnetName": "Subnet",
@@ -176,6 +186,29 @@
                 }
             },
             "resources": [
+                {
+                    "type": "extensions",
+                    "apiVersion": "2020-12-01",
+                    "name": "CustomScriptExtension",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[variables('vmName')]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Compute",
+                        "type": "CustomScriptExtension",
+                        "typeHandlerVersion": "1.8",
+                        "autoUpgradeMinorVersion": true,
+						"protectedSettings": {
+							"commandToExecute": "powershell.exe ./script3.ps1 parameters('adminUsername')",
+							"managedIdentity" : {},
+							"fileUris": [
+								"https://imdslabsscripts.blob.core.windows.net/scripts/script3.ps1",
+								"https://imdslabsscripts.blob.core.windows.net/scripts/IMDS-Script.py"
+							]
+						}
+                    }
+                }
             ]
         }
     ],
