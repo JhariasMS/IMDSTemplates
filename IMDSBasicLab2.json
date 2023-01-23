@@ -182,7 +182,8 @@
                     "name": "CustomScriptExtension",
                     "location": "[parameters('location')]",
                     "dependsOn": [
-                        "[variables('vmName')]"
+                        "[variables('vmName')]",
+						"[parameters('adminUsername')]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Compute",
@@ -190,7 +191,7 @@
                         "typeHandlerVersion": "1.8",
                         "autoUpgradeMinorVersion": true,
 						"protectedSettings": {
-							"commandToExecute": "powershell.exe ./script3.ps1 parameters('adminUsername')",
+							"commandToExecute": "powershell.exe ./script3.ps1 [parameters('adminUsername')]",
 							"managedIdentity" : {},
 							"fileUris": [
 								"https://imdslabsscripts.blob.core.windows.net/scripts/script3.ps1",
