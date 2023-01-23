@@ -182,8 +182,7 @@
                     "name": "CustomScriptExtension",
                     "location": "[parameters('location')]",
                     "dependsOn": [
-                        "[variables('vmName')]",
-						"[parameters('adminUsername')]"
+                        "[variables('vmName')]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Compute",
