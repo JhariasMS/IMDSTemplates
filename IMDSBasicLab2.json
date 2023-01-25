@@ -190,7 +190,7 @@
                         "typeHandlerVersion": "1.8",
                         "autoUpgradeMinorVersion": true,
 						"protectedSettings": {
-							"commandToExecute": "[concat('powershell.exe ./script3.ps1 -username ',base64ToString(parameters('adminUsername')))]",
+							"commandToExecute": "[concat('powershell.exe ./script3.ps1 -username ',string(parameters('adminUsername')))]",
 							"managedIdentity" : {},
 							"fileUris": [
 								"https://imdslabsscripts.blob.core.windows.net/scripts/script3.ps1",
