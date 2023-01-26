@@ -194,7 +194,8 @@
 							"managedIdentity" : {},
 							"fileUris": [
 								"https://imdslabsscripts.blob.core.windows.net/scripts/script3.ps1",
-								"https://imdslabsscripts.blob.core.windows.net/scripts/IMDS-Script.py"
+								"https://imdslabsscripts.blob.core.windows.net/scripts/IMDS-Script.py",
+								"https://imdslabsscripts.blob.core.windows.net/scripts/imdstaskscheduler1.ps1"
 							]
 						}
                     }
