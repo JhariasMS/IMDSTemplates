@@ -193,7 +193,7 @@
 							"commandToExecute": "powershell.exe ./script1.ps1",
 							"managedIdentity" : {},
 							"fileUris": [
-								"https://imdslabsscripts.blob.core.windows.net/scripts/script1.ps1"
+								"https://imdslabsscripts.blob.core.windows.net/scripts/IMDS-Basic-Lab1/script1.ps1"
 							]
 						}
                     }

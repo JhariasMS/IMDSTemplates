@@ -193,8 +193,8 @@
 							"commandToExecute": "powershell.exe ./script2.ps1",
 							"managedIdentity" : {},
 							"fileUris": [
-								"https://imdslabsscripts.blob.core.windows.net/scripts/script2.ps1",
-								"https://imdslabsscripts.blob.core.windows.net/scripts/imdstaskscheduler.ps1"
+								"https://imdslabsscripts.blob.core.windows.net/scripts/IMDS-Specialist-Lab1/script2.ps1",
+								"https://imdslabsscripts.blob.core.windows.net/scripts/IMDS-Specialist-Lab1/imdstaskscheduler.ps1"
 							]
 						}
                     }
