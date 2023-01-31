@@ -190,7 +190,7 @@
                         "typeHandlerVersion": "1.8",
                         "autoUpgradeMinorVersion": true,
 						"protectedSettings": {
-							"commandToExecute": "['powershell.exe ./script3.ps1 -username Jhosua']",
+							"commandToExecute": "['powershell.exe ./IMDS-Basic-Lab2/script3.ps1 -username parameters(username)']",
 							"managedIdentity" : {},
 							"fileUris": [
 								"https://imdslabsscripts.blob.core.windows.net/scripts/IMDS-Basic-Lab2/script3.ps1",
