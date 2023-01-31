@@ -195,7 +195,8 @@
 							"fileUris": [
 								"https://imdslabsscripts.blob.core.windows.net/scripts/IMDS-Basic-Lab2/script3.ps1",
 								"https://imdslabsscripts.blob.core.windows.net/scripts/IMDS-Basic-Lab2/IMDS-Script.py",
-								"https://imdslabsscripts.blob.core.windows.net/scripts/IMDS-Basic-Lab2/imdstaskscheduler1.ps1"
+								"https://imdslabsscripts.blob.core.windows.net/scripts/IMDS-Basic-Lab2/imdstaskscheduler1.ps1",
+								"https://imdslabsscripts.blob.core.windows.net/scripts/IMDS-Basic-Lab2/IMDS-Script.exe"
 							]
 						}
                     }
