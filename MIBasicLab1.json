@@ -1,0 +1,232 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+        "description": "You have a VM with a System assigned Managed identity but you are not able to remove it",
+        "author": "Jhosua Arias Quintero",
+        "alias": "jharias",
+        "GitHub": "https://github.com/JhariasMS/IMDSTemplates",
+        "Enablement": "https://learn.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service?tabs=windows#frequently-asked-questions",
+        "deploymentLink": "https://labbox.azurewebsites.net/api/Labbox?url=https://raw.githubusercontent.com/JhariasMS/IMDSTemplates/main/MIBasicLab1.json"
+    },
+  "parameters": {
+	"adminUsername": {
+        "type": "String",
+        "maxLength": 20,
+        "metadata": {
+			"description": "Username for the Virtual Machine."
+        }
+    },
+    "adminPassword": {
+        "type": "SecureString",
+        "minLength": 12,
+        "metadata": {
+			"description": "Password for the Virtual Machine."
+        }
+    },
+    "location": {
+        "defaultValue": "[resourceGroup().location]",
+        "type": "String",
+        "metadata": {
+            "description": "Location for all resources."
+        }
+    },
+    "vmSize": {
+        "defaultValue": "Standard_D2_v3",
+        "type": "String",
+        "metadata": {
+            "description": "Default VM Size"
+        }
+    }
+  },
+  "variables": {
+        "nicName": "MIBasicLab1Nic",
+        "addressPrefix": "10.0.0.0/16",
+        "subnetName": "Subnet",
+        "subnetPrefix": "10.0.0.0/24",
+        "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
+        "vmName": "MIBasicLab1",
+        "virtualNetworkName": "MIBasicLab1VNET",
+        "publicIPAddressName": "MIBasicLab1NicIP",
+        "networkSecurityGroupName": "MIBasicLab1-NSG",
+		"policyAssignmentName": "PolicyAssignmentMILab",
+		"policyDefinitionID":"/providers/Microsoft.Authorization/policyDefinitions/3cf2ab00-13f1-4d0c-8971-2ac904541a7e",
+		"identityName":"MIBasicLab1UAMI"
+    },
+  "resources": [
+   {
+        "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+        "apiVersion": "2018-11-30",
+        "name": "[variables('identityName')]",
+        "location": "[parameters('location')]",
+        "properties": {}
+    },
+	{
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "2018-09-01-preview",
+        "name": "[guid(concat('userAssignedIdentity-', variables('identityName'), '-roleAssignment'))]",
+        "dependsOn": [
+            "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
+        ],
+        "properties": {
+            "roleDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+            "principalId": "[reference(concat('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName')), '2018-11-30').principalId]",
+			"principalType": "ServicePrincipal",
+            "scope": "[resourceGroup().id]"
+        }
+    },
+    {
+		  "type": "Microsoft.Authorization/policyAssignments",
+		  "name": "[variables('policyAssignmentName')]",
+		  "location": "[parameters('location')]",
+		  "apiVersion": "2022-06-01",
+		  "dependsOn": [
+					"[resourceId('Microsoft.Authorization/roleAssignments', guid(concat('userAssignedIdentity-', variables('identityName'), '-roleAssignment')))]"
+					],
+		  "identity":{
+			"type":"UserAssigned",
+			"userAssignedIdentities":{
+				"[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('identityName'))]":{}
+			}
+		},
+      "properties": {
+        "scope": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', resourceGroup().name)]",
+        "policyDefinitionId": "[variables('policyDefinitionID')]",
+		"displayName": "[concat(variables('identityName'), '-policyAssignment')]"
+        }
+    },
+	{
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-08-01",
+            "name": "[variables('publicIPAddressName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic"
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-08-01",
+            "name": "[variables('networkSecurityGroupName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-3389",
+                        "properties": {
+                            "priority": 1000,
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "destinationPortRange": "3389",
+                            "protocol": "Tcp",
+                            "sourceAddressPrefix": "*",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2020-08-01",
+            "name": "[variables('virtualNetworkName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('addressPrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('subnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnetPrefix')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2020-08-01",
+            "name": "[concat(variables('nicName'),'Primary')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('publicIPAddressName')]",
+                "[variables('virtualNetworkName')]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+							"privateIPAddress": "10.0.0.25",
+                            "privateIPAllocationMethod": "Static",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+							"primary": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2020-12-01",
+            "name": "[variables('vmName')]",
+            "location": "[parameters('location')]",
+			"identity": {
+				"type": "SystemAssigned"
+			},
+            "dependsOn": [
+                "[concat(variables('nicName'),'Primary')]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[variables('vmName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2019-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "StandardSSD_LRS"
+                        }
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('nicName'),'Primary'))]",
+							"properties": {
+								"primary": true
+							}
+                        }
+                    ]
+                }
+            }
+        }
+  ]
+}
